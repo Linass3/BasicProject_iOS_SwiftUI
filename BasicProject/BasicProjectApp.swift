@@ -13,7 +13,7 @@ import FirebaseAuth
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(
         _ application: UIApplication,
-        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
         FirebaseApp.configure()
         return true
@@ -23,15 +23,12 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 @main
 struct BasicProjectApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    
-    init() {
-        UITabBar.appearance().backgroundColor = UIColor.systemGray5
-        UINavigationBar.appearance().backgroundColor = UIColor.systemYellow
-    }
+    @StateObject var viewModel = AuthViewModel()
     
     var body: some Scene {
         WindowGroup {
-            LoginView()
+            ContentView()
+                .environmentObject(viewModel)
         }
     }
 }
