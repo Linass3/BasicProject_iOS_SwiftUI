@@ -18,5 +18,6 @@ struct ContentView: View {
                 LoginView()
             }
         }
+        .animation(.smooth, value: viewModel.userSession)
     }
 }

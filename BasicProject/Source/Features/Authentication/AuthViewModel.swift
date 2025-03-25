@@ -9,76 +9,87 @@ import Foundation
 import Combine
 import FirebaseAuth
 import FirebaseAuthCombineSwift
+import FirebaseFirestore
 
 protocol AuthViewModelProtocol {
-    func login() async
-    func signUp() async
-    func signOut()
-    func deleteAccount()
+    func login(email: String, password: String) async
+    func signUp(email: String, password: String, fullName: String) async
+    func signOut() async
+    func deleteAccount() async
     func fetchUser() async
 }
 
+@MainActor
 final class AuthViewModel: AuthViewModelProtocol, ObservableObject {
     @Published var userSession: FirebaseAuth.User?
     @Published var currentUser: User?
     
-    @Published var fullName: String = .emptyString
-    @Published var email: String = .emptyString
-    @Published var password: String = .emptyString
+    init() {
+        userSession = Auth.auth().currentUser
+        
+        Task {
+            await fetchUser()
+        }
+    }
 
     @Published var showLoginAlert = false
     @Published var errorMessage: String = .emptyString
     
-    func login() async {
+    func login(email: String, password: String) async {
         do {
             let result = try await Auth.auth().signIn(withEmail: email, password: password)
-            DispatchQueue.main.async {
-                self.errorMessage = "Logged in successfully \nEmail: \(result.user.email ?? .emptyString)"
-                self.showLoginAlert = true
-                self.clearTextFields()
-            }
+
+            userSession = result.user
+            await fetchUser()
         } catch {
-            DispatchQueue.main.async {
-                self.errorMessage = error.localizedDescription
-                self.showLoginAlert = true
-            }
-            
+            print("Login error: \(error.localizedDescription)")
         }
     }
     
-    func signUp() async {
+    func signUp(email: String, password: String, fullName: String) async {
         do {
-            try await Auth.auth().createUser(withEmail: email, password: password)
-            DispatchQueue.main.async {
-                self.errorMessage = "User created successfully\nPlease login"
-                self.showLoginAlert = true
-                self.clearTextFields()
-            }
+            let result = try await Auth.auth().createUser(withEmail: email, password: password)
+            
+            userSession = result.user
+            let user = User(id: result.user.uid, fullName: fullName, email: email)
+            
+            let encodedUser = try Firestore.Encoder().encode(user)
+            try await Firestore.firestore().collection("users").document(user.id).setData(encodedUser)
+            currentUser = user
         } catch {
-            DispatchQueue.main.async {
-                self.errorMessage = error.localizedDescription
-                self.showLoginAlert = true
-            }
+            print("Signup error: \(error.localizedDescription)")
         }
     }
     
-    func signOut() {
-        
+    func signOut() async {
+        do {
+            try Auth.auth().signOut()
+            userSession = nil
+            currentUser = nil
+        } catch {
+            print("Signout error: \(error.localizedDescription)")
+        }
     }
 
-    func deleteAccount() {
-        
+    func deleteAccount() async {
+        do {
+            try await Auth.auth().currentUser?.delete()
+            userSession = nil
+            currentUser = nil
+        } catch {
+            print("User deletion error: \(error.localizedDescription)")
+        }
     }
 
     func fetchUser() async {
+        guard
+            let uid = Auth.auth().currentUser?.uid,
+            let snapshot = try? await Firestore.firestore().collection("users").document(uid).getDocument()
+        else {
+            return
+        }
         
-    }
-}
-
-private extension AuthViewModel {
-    func clearTextFields() {
-        fullName = .emptyString
-        email = .emptyString
-        password = .emptyString
+        currentUser = try? snapshot.data(as: User.self)
+        print(currentUser?.fullName ?? "")
     }
 }

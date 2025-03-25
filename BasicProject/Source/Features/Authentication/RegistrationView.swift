@@ -82,7 +82,7 @@ struct RegistrationView: View {
                 
                 Button {
                     Task {
-                        await viewModel.signUp()
+                        await viewModel.signUp(email: email, password: password, fullName: fullName)
                     }
                 } label: {
                     Text(Constant.registerButtonTitle)
