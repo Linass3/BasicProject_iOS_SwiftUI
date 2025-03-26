@@ -43,6 +43,8 @@ struct LoginView: View {
                     secureTextEntry: false,
                     icon: Constant.emailTextfieldIconName
                 )
+                .textContentType(.username)
+                .keyboardType(.emailAddress)
                 .padding(.horizontal, 40)
                 .padding(.bottom, 20)
                 
@@ -52,6 +54,7 @@ struct LoginView: View {
                     secureTextEntry: true,
                     icon: Constant.passwordTextfieldIconName
                 )
+                .textContentType(.password)
                 .padding(.horizontal, 40)
                 .padding(.bottom, 20)
                 

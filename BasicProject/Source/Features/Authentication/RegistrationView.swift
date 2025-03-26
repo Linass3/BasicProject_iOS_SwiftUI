@@ -50,6 +50,9 @@ struct RegistrationView: View {
                     secureTextEntry: false,
                     icon: Constant.nameTextfieldIconName
                 )
+                .textContentType(.name)
+                .textInputAutocapitalization(.words)
+                .keyboardType(.emailAddress)
                 .padding(.horizontal, 40)
                 .padding(.bottom, 20)
                 
@@ -59,6 +62,8 @@ struct RegistrationView: View {
                     secureTextEntry: false,
                     icon: Constant.emailTextfieldIconName
                 )
+                .textContentType(.username)
+                .keyboardType(.emailAddress)
                 .padding(.horizontal, 40)
                 .padding(.bottom, 20)
                 
@@ -68,6 +73,7 @@ struct RegistrationView: View {
                     secureTextEntry: true,
                     icon: Constant.passwordTextfieldIconName
                 )
+                .textContentType(.newPassword)
                 .padding(.horizontal, 40)
                 .padding(.bottom, 20)
                 
@@ -77,6 +83,7 @@ struct RegistrationView: View {
                     secureTextEntry: true,
                     icon: Constant.passwordTextfieldIconName
                 )
+                .textContentType(.newPassword)
                 .padding(.horizontal, 40)
                 .padding(.bottom, 20)
                 

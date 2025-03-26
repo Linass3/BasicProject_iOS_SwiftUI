@@ -12,12 +12,25 @@ struct ContentView: View {
     
     var body: some View {
         Group {
-            if viewModel.userSession != nil {
+            if viewModel.userSession != nil && viewModel.currentUser != nil {
                 UserProfileView()
+                    .transition(.move(edge: .leading))
             } else {
                 LoginView()
+                    .transition(.move(edge: .leading))
             }
         }
-        .animation(.smooth, value: viewModel.userSession)
+        .overlay {
+            if viewModel.isLoading {
+                ZStack {
+                    Color.white.opacity(0.5)
+                        .edgesIgnoringSafeArea(.all)
+                    
+                    ProgressView()
+                        .controlSize(.large)
+                        .tint(.black)
+                }
+            }
+        }
     }
 }
