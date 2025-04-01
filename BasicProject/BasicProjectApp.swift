@@ -24,11 +24,13 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 struct BasicProjectApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @StateObject var viewModel = AuthViewModel()
+    @StateObject var coreDataStack = CoreDataStack.shared
     
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environmentObject(viewModel)
+                .environment(\.managedObjectContext, coreDataStack.persistentContainer.viewContext)
         }
     }
 }
