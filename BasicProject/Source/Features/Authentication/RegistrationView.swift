@@ -21,29 +21,18 @@ struct RegistrationView: View {
         static let passwordPlaceholder = "Password"
         static let confirmPasswordPlaceholder = "Confirm password"
         static let passwordTextfieldIconName = "key.fill"
-        
-        static let registerButtonTitle = "Register"
-        
-        static let alertButtonApproveText = "OK"
     }
     
     @EnvironmentObject private var viewModel: AuthViewModel
-    @Environment(\.dismiss) private var dismiss
     
-    @State private var fullName: String = .emptyString
-    @State private var email: String = .emptyString
-    @State private var password: String = .emptyString
-    @State private var confirmPassword: String = .emptyString
+    @Binding var fullName: String
+    @Binding var email: String
+    @Binding var password: String
+    @Binding var confirmPassword: String
     
     var body: some View {
         NavigationStack {
             VStack {
-                Label(Constant.mainLabelTitle, systemImage: Constant.mainLabelIconName)
-                    .foregroundStyle(
-                        .linearGradient(Gradient(colors: [.blue, .purple]), startPoint: .leading, endPoint: .trailing)
-                    )
-                    .font(.system(size: 40, weight: .medium, design: .rounded))
-                
                 LoginTextField(
                     text: $fullName,
                     placeholder: Constant.namePlaceholder,
@@ -86,40 +75,17 @@ struct RegistrationView: View {
                 .textContentType(.newPassword)
                 .padding(.horizontal, 40)
                 .padding(.bottom, 20)
-                
-                Button {
-                    Task {
-                        await viewModel.signUp(email: email, password: password, fullName: fullName)
-                    }
-                } label: {
-                    Text(Constant.registerButtonTitle)
-                        .frame(width: 300, height: 44)
-                        .font(.title2)
-                }
-                .alert(viewModel.errorMessage, isPresented: $viewModel.showLoginAlert) {
-                    Button(Constant.alertButtonApproveText, role: .cancel) {
-                        viewModel.showLoginAlert = false
-                    }
-                }
-                .buttonStyle(.borderedProminent)
-                .padding(.bottom, 10)
-                
-                Button {
-                    dismiss()
-                } label: {
-                    HStack {
-                        Text("Already have an account?")
-                        Text("Login")
-                            .fontWeight(.bold)
-                    }
-                }
-                .frame(width: 300, height: 44)
             }
         }
     }
 }
 
 #Preview {
-    RegistrationView()
+    RegistrationView(
+        fullName: Binding(get: { "" }, set: { _ in }),
+        email: Binding(get: { "" }, set: { _ in }),
+        password: Binding(get: { "" }, set: { _ in }),
+        confirmPassword: Binding(get: { "" }, set: { _ in })
+    )
         .environmentObject(AuthViewModel())
 }

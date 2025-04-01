@@ -24,13 +24,11 @@ struct LoginTextField: View {
             
             if secureTextEntry {
                 SecureField(.emptyString, text: $text)
-                    .offset(y: text.isEmpty ? 0 : 8)
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(.never)
                     .focused($isFocused)
             } else {
                 TextField(.emptyString, text: $text)
-                    .offset(y: text.isEmpty ? 0 : 8)
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(.never)
                     .focused($isFocused)
