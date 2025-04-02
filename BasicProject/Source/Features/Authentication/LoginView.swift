@@ -16,7 +16,7 @@ struct LoginView: View {
         static let passwordTextfieldIconName = "key.fill"
     }
 
-    @EnvironmentObject private var viewModel: AuthViewModel
+    @Environment(AuthViewModel.self) private var viewModel
     
     @Binding var email: String
     @Binding var password: String
@@ -51,5 +51,5 @@ struct LoginView: View {
 
 #Preview {
     LoginView(email: Binding(get: { "" }, set: { _ in }), password: Binding(get: { "" }, set: { _ in }))
-        .environmentObject(AuthViewModel())
+        .environment(AuthViewModel())
 }

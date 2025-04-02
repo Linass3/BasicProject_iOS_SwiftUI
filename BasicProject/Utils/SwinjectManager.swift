@@ -10,7 +10,19 @@ import Swinject
 public typealias DI = SwinjectManager
 
 public final class SwinjectManager {
-    let container = Container()
+    private static let container = Container()
     
+    static func registerDependencies() {
+        container.register(CoreDataStack.self) { _ in
+            CoreDataStack.shared
+        }.inObjectScope(.container)
+    }
     
+    static func resolve<Service>(_ serviceType: Service.Type) -> Service {
+        guard let resolvedService = container.resolve(serviceType) else {
+            fatalError("Could not resolve servise: \(serviceType)")
+        }
+        
+        return resolvedService
+    }
 }

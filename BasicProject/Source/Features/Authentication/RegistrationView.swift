@@ -23,8 +23,8 @@ struct RegistrationView: View {
         static let passwordTextfieldIconName = "key.fill"
     }
     
-    @EnvironmentObject private var viewModel: AuthViewModel
-    
+    @Environment(AuthViewModel.self) private var viewModel
+
     @Binding var fullName: String
     @Binding var email: String
     @Binding var password: String
@@ -87,5 +87,5 @@ struct RegistrationView: View {
         password: Binding(get: { "" }, set: { _ in }),
         confirmPassword: Binding(get: { "" }, set: { _ in })
     )
-        .environmentObject(AuthViewModel())
+        .environment(AuthViewModel())
 }

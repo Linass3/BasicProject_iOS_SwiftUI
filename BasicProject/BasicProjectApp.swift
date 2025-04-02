@@ -7,30 +7,22 @@
 
 import SwiftUI
 import FirebaseCore
-import FirebaseFirestore
-import FirebaseAuth
-
-class AppDelegate: NSObject, UIApplicationDelegate {
-    func application(
-        _ application: UIApplication,
-        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
-    ) -> Bool {
-        FirebaseApp.configure()
-        return true
-    }
-}
 
 @main
 struct BasicProjectApp: App {
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    @StateObject var viewModel = AuthViewModel()
-    @StateObject var coreDataStack = CoreDataStack.shared
-    
+    @State private var viewModel: AuthViewModel
+
+    init() {
+        FirebaseApp.configure()
+        DI.registerDependencies()
+        _viewModel = State(initialValue: AuthViewModel())
+    }
+
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(viewModel)
-                .environment(\.managedObjectContext, coreDataStack.persistentContainer.viewContext)
+                .environment(viewModel)
+                .environment(\.managedObjectContext, DI.resolve(CoreDataStack.self).context)
         }
     }
 }

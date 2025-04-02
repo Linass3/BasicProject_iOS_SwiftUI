@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import FirebaseCore
 import FirebaseAuth
 import FirebaseFirestore
 
@@ -17,11 +18,11 @@ protocol AuthViewModelProtocol {
 }
 
 @MainActor
-final class AuthViewModel: AuthViewModelProtocol, ObservableObject {
+@Observable class AuthViewModel: AuthViewModelProtocol {
     
     // MARK: - Published variables
 
-    @Published var userSession: FirebaseAuth.User? {
+    var userSession: FirebaseAuth.User? {
         didSet {
             if let userSession {
                 Task {
@@ -34,13 +35,13 @@ final class AuthViewModel: AuthViewModelProtocol, ObservableObject {
         }
     }
     
-    @Published var currentUser: User?
-    @Published var isLoading = false
-    @Published var isSignedIn = false
-    @Published var isSignUp = false
+    var currentUser: User?
+    var isLoading = false
+    var isSignedIn = false
+    var isSignUp = false
     
-    @Published var showLoginAlert = false
-    @Published var errorMessage: String = .emptyString
+    var showLoginAlert = false
+    var errorMessage: String = .emptyString
     
     // MARK: - Initializer
 

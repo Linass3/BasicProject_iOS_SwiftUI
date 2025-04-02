@@ -20,8 +20,8 @@ struct AuthView: View {
         static let haveAccountText = "Already have an account?"
     }
 
-    @EnvironmentObject private var viewModel: AuthViewModel
-    
+    @Environment(AuthViewModel.self) private var viewModel
+
     @State private var email: String = .emptyString
     @State private var password: String = .emptyString
     
@@ -47,6 +47,7 @@ struct AuthView: View {
                     LoginView(email: $email, password: $password)
                 }
                 
+                @Bindable var viewModel = viewModel
                 Button {
                     Task {
                         await viewModel.authenticate(email: email, password: password, fullName: fullName)
@@ -83,5 +84,5 @@ struct AuthView: View {
 
 #Preview {
     AuthView()
-        .environmentObject(AuthViewModel())
+        .environment(AuthViewModel())
 }

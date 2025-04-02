@@ -8,35 +8,14 @@
 import SwiftUI
 
 struct ContentView: View {
-    @EnvironmentObject var viewModel: AuthViewModel
-            
+    @Environment(AuthViewModel.self) private var viewModel
+    
     var body: some View {
-//        Group {
-//            if viewModel.userSession != nil && viewModel.currentUser != nil {
-//                UserProfileView()
-//                    .transition(.move(edge: .leading))
-//            } else {
-//                LoginView()
-//                    .transition(.move(edge: .leading))
-//            }
-//        }
-//        .overlay {
-//            if viewModel.isLoading {
-//                ZStack {
-//                    Color.white.opacity(0.5)
-//                        .edgesIgnoringSafeArea(.all)
-//                    
-//                    ProgressView()
-//                        .controlSize(.large)
-//                        .tint(.black)
-//                }
-//            }
-//        }
-        
         NavigationStack {
+            @Bindable var viewModel = viewModel
             AuthView()
                 .navigationDestination(isPresented: $viewModel.isSignedIn) {
-                    UserProfileView()
+                    AddExpensesView()
                         .navigationBarBackButtonHidden(true)
                 }
                 .overlay {
