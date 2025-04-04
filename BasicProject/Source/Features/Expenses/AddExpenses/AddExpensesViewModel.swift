@@ -6,9 +6,9 @@
 //
 
 import SwiftUI
+import CoreData
 
 @Observable final class AddExpensesViewModel {
-    private let expensesCoreData = CoreDataStack.shared
     private let context = CoreDataStack.shared.context
     
     var expenses: [Expense] = []
@@ -17,18 +17,20 @@ import SwiftUI
         getExpenses()
     }
     
-    func insertExpense(name: String) {
+    func insertExpense(name: String, amount: Double, date: Date) {
         let newItem = Expense(context: context)
         newItem.name = name
+        newItem.amount = amount
+        newItem.createdOn = date
         context.performSave()
         getExpenses()
     }
     
-    func deleteExpense(at index: IndexPath) {
-        
+    func deleteExpense(at index: IndexSet.Element) {
+        context.delete(expenses[index])
     }
     
     private func getExpenses() {
-        expenses = expensesCoreData.fetchExpenses()
+        expenses = context.fetch(Expense.self) ?? []
     }
 }

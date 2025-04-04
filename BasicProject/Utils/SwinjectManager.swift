@@ -6,7 +6,9 @@
 //
 
 import Swinject
+import CoreData
 
+// swiftlint:disable:next type_name
 public typealias DI = SwinjectManager
 
 public final class SwinjectManager {

@@ -25,19 +25,16 @@ protocol AuthViewModelProtocol {
     var userSession: FirebaseAuth.User? {
         didSet {
             if let userSession {
-                Task {
-                    await fetchUser()
-                    isSignedIn = true
-                }
+                isLoggedIn = true
             } else {
-                isSignedIn = false
+                isLoggedIn = false
             }
         }
     }
     
     var currentUser: User?
-    var isLoading = false
-    var isSignedIn = false
+    var isLoading = true
+    var isLoggedIn = false
     var isSignUp = false
     
     var showLoginAlert = false
@@ -46,7 +43,9 @@ protocol AuthViewModelProtocol {
     // MARK: - Initializer
 
     init() {
-        userSession = Auth.auth().currentUser
+        Task {
+            await initialCheckIfLoggedIn()
+        }
     }
     
     // MARK: - Public functionality
@@ -95,17 +94,6 @@ protocol AuthViewModelProtocol {
 // MARK: - Private functionality
 
 private extension AuthViewModel {
-    func fetchUser() async {
-        guard
-            let uid = Auth.auth().currentUser?.uid,
-            let snapshot = try? await Firestore.firestore().collection("users").document(uid).getDocument()
-        else {
-            return
-        }
-        
-        currentUser = try? snapshot.data(as: User.self)
-    }
-    
     func login(email: String, password: String) async {
         defer {
             isLoading = false
@@ -140,6 +128,28 @@ private extension AuthViewModel {
             currentUser = user
         } catch {
             print("Signup error: \(error.localizedDescription)")
+        }
+    }
+    
+    func fetchUser() async {
+        guard
+            let uid = Auth.auth().currentUser?.uid,
+            let snapshot = try? await Firestore.firestore().collection("users").document(uid).getDocument()
+        else {
+            return
+        }
+        
+        currentUser = try? snapshot.data(as: User.self)
+    }
+    
+    func initialCheckIfLoggedIn() async {
+        defer {
+            isLoading = false
+        }
+        
+        userSession = Auth.auth().currentUser
+        if userSession != nil {
+            await fetchUser()
         }
     }
 }

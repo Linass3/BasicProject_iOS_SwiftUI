@@ -24,11 +24,13 @@ struct LoginTextField: View {
             
             if secureTextEntry {
                 SecureField(.emptyString, text: $text)
+                    .offset(y: text.isEmpty ? 0 : 8)
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(.never)
                     .focused($isFocused)
             } else {
                 TextField(.emptyString, text: $text)
+                    .offset(y: text.isEmpty ? 0 : 8)
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(.never)
                     .focused($isFocused)
@@ -36,9 +38,11 @@ struct LoginTextField: View {
         }
         .animation(.default, value: text)
         .padding(20)
-        .overlay(
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(isFocused ? Color.accentColor : Color.gray, lineWidth: 1)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Color.white)
+                .stroke(Color.accentColor, lineWidth: isFocused ? 1 : 0)
+                .shadow(radius: 5)
         )
     }
 }

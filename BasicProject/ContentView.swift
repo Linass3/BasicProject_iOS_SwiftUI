@@ -1,35 +1,58 @@
 //
-//  ContentView.swift
+//  ExpensesView.swift
 //  BasicProject
 //
-//  Created by Linas Venclavičius on 16/03/2025.
+//  Created by Linas Venclavičius on 03/04/2025.
 //
 
 import SwiftUI
 
 struct ContentView: View {
-    @Environment(AuthViewModel.self) private var viewModel
+    @State private var viewModel = AddExpensesViewModel()
+    @State private var selectedTab: Tab = .home
     
     var body: some View {
-        NavigationStack {
-            @Bindable var viewModel = viewModel
-            AuthView()
-                .navigationDestination(isPresented: $viewModel.isSignedIn) {
+//        TabView {
+//            AddExpensesView()
+//                .tabItem {
+//                    Image(systemName: "plus")
+//                    Text("Add")
+//                }
+//            
+//            AddExpensesView()
+//                .tabItem {
+//                    Image(systemName: "house")
+//                    Text("Home")
+//                }
+//            
+//            UserProfileView()
+//                .tabItem {
+//                    Image(systemName: "person.circle")
+//                    Text("Profile")
+//                }
+//        }
+        ZStack {
+            VStack {
+                switch selectedTab {
+                case .home:
+                    ExpensesStatusView()
+                case .add:
                     AddExpensesView()
-                        .navigationBarBackButtonHidden(true)
+                case .profile:
+                    UserProfileView()
                 }
-                .overlay {
-                    if viewModel.isLoading {
-                        ZStack {
-                            Color.white.opacity(0.5)
-                                .edgesIgnoringSafeArea(.all)
-                            
-                            ProgressView()
-                                .controlSize(.large)
-                                .tint(.gray)
-                        }
-                    }
-                }
+            }
+            
+            VStack {
+                Spacer()
+                
+                TabBarView(selectedTab: $selectedTab)
+            }
         }
+        .environment(viewModel)
     }
+}
+
+#Preview {
+    ContentView()
 }

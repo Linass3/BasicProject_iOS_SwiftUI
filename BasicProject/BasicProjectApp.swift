@@ -7,6 +7,7 @@
 
 import SwiftUI
 import FirebaseCore
+import CoreData
 
 @main
 struct BasicProjectApp: App {
@@ -20,9 +21,9 @@ struct BasicProjectApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            AppView()
                 .environment(viewModel)
-                .environment(\.managedObjectContext, DI.resolve(CoreDataStack.self).context)
+                .environment(\.managedObjectContext, CoreDataStack.shared.context)
         }
     }
 }

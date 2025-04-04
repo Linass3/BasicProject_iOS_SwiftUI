@@ -37,22 +37,5 @@ class CoreDataStack {
         }
     }
     
-    func delete(item: NSManagedObject) {
-        context.delete(item)
-        save()
-    }
-    
-    func fetchExpenses() -> [Expense] {
-        let request = NSFetchRequest<Expense>(entityName: "Expense")
-        
-        do {
-            let results = try context.fetch(request)
-            return results
-        } catch {
-            print("Error fetching expenses: \(error.localizedDescription)")
-            return []
-        }
-    }
-    
     private init() { }
 }

@@ -30,53 +30,73 @@ struct AuthView: View {
     
     var body: some View {
         NavigationStack {
-            VStack {
-                Image(Constant.mainLabelIconName)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 150, height: 150)
-                    .foregroundStyle(.green)
-                
-                Text(Constant.mainLabelTitle)
-                    .foregroundStyle(.green)
-                    .font(.system(size: 50, weight: .medium, design: .rounded))
-                
-                if viewModel.isSignUp {
-                    RegistrationView(fullName: $fullName, email: $email, password: $password, confirmPassword: $repeatPassword)
-                } else {
-                    LoginView(email: $email, password: $password)
-                }
-                
-                @Bindable var viewModel = viewModel
-                Button {
-                    Task {
-                        await viewModel.authenticate(email: email, password: password, fullName: fullName)
-                    }
-                } label: {
-                    Text(viewModel.isSignUp ? Constant.signUpButtonTitle : Constant.loginButtonTitle)
+            ZStack {
+                GeometryReader { geo in
+                    Image("MainBackground")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(maxWidth: geo.size.width, maxHeight: .infinity)
+                        .clipped()
+                        .ignoresSafeArea(.all)
+                    
+                    VStack {
+                        Spacer ()
+                        
+                        Image(Constant.mainLabelIconName)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 150, height: 150)
+                            .foregroundStyle(.green)
+                        
+                        Text(Constant.mainLabelTitle)
+                            .foregroundStyle(.green)
+                            .font(.system(size: 50, weight: .medium, design: .rounded))
+                        
+                        if viewModel.isSignUp {
+                            RegistrationView(
+                                fullName: $fullName,
+                                email: $email,
+                                password: $password,
+                                confirmPassword: $repeatPassword
+                            )
+                        } else {
+                            LoginView(email: $email, password: $password)
+                        }
+                        
+                        @Bindable var viewModel = viewModel
+                        Button {
+                            Task {
+                                await viewModel.authenticate(email: email, password: password, fullName: fullName)
+                            }
+                        } label: {
+                            Text(viewModel.isSignUp ? Constant.signUpButtonTitle : Constant.loginButtonTitle)
+                                .frame(width: 300, height: 44)
+                                .font(.title2)
+                        }
+                        .alert(viewModel.errorMessage, isPresented: $viewModel.showLoginAlert) {
+                            Button(Constant.alertButtonApproveText, role: .cancel) {
+                                viewModel.showLoginAlert = false
+                            }
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .padding(.bottom, 10)
+                        
+                        Button {
+                            withAnimation {
+                                viewModel.isSignUp.toggle()
+                            }
+                        } label: {
+                            HStack {
+                                Text(viewModel.isSignUp ? Constant.haveAccountText : Constant.noAccountText)
+                                Text(viewModel.isSignUp ? Constant.signUpButtonTitle : Constant.loginButtonTitle)
+                                    .fontWeight(.bold)
+                            }
+                        }
                         .frame(width: 300, height: 44)
-                        .font(.title2)
-                }
-                .alert(viewModel.errorMessage, isPresented: $viewModel.showLoginAlert) {
-                    Button(Constant.alertButtonApproveText, role: .cancel) {
-                        viewModel.showLoginAlert = false
+                        
+                        Spacer()
                     }
                 }
-                .buttonStyle(.borderedProminent)
-                .padding(.bottom, 10)
-                
-                Button {
-                    withAnimation {
-                        viewModel.isSignUp.toggle()
-                    }
-                } label: {
-                    HStack {
-                        Text(viewModel.isSignUp ? Constant.haveAccountText : Constant.noAccountText)
-                        Text(viewModel.isSignUp ? Constant.signUpButtonTitle : Constant.loginButtonTitle)
-                            .fontWeight(.bold)
-                    }
-                }
-                .frame(width: 300, height: 44)
             }
         }
     }
